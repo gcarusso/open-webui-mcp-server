@@ -26,6 +26,9 @@ class OpenWebUIClient:
         """
         self.base_url = (base_url or os.getenv("OPENWEBUI_URL", "")).rstrip("/")
         self.api_key = api_key or os.getenv("OPENWEBUI_API_KEY", "")
+        # Cloudflare Access service token support
+        self.cf_access_client_id = os.getenv("CF_ACCESS_CLIENT_ID", "")
+        self.cf_access_client_secret = os.getenv("CF_ACCESS_CLIENT_SECRET", "")
 
         if not self.base_url:
             raise ValueError(
@@ -40,6 +43,11 @@ class OpenWebUIClient:
         }
         if token:
             headers["Authorization"] = f"Bearer {token}"
+        # Cloudflare Access headers (required for CF-tunneled OWUI instances)
+        if self.cf_access_client_id:
+            headers["CF-Access-Client-Id"] = self.cf_access_client_id
+        if self.cf_access_client_secret:
+            headers["CF-Access-Client-Secret"] = self.cf_access_client_secret
         return headers
 
     async def request(
