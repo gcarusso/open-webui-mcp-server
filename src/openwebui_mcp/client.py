@@ -50,6 +50,9 @@ class OpenWebUIClient:
         **kwargs: Any,
     ) -> dict[str, Any]:
         """Make an authenticated request to Open WebUI API."""
+        # Strip trailing slashes to prevent OWUI SPA catch-all from
+        # returning HTML instead of JSON (affects OWUI 0.8.x+)
+        path = path.rstrip("/")
         url = f"{self.base_url}{path}"
         headers = self._get_headers(api_key)
 
